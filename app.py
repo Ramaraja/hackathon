@@ -15,8 +15,6 @@ def index():
 
 @app.route("/lru")
 def fs_lru():
-    df = pd.read_csv('data.csv').drop('Open', axis=1)
-    chart_data = df.to_dict(orient='records')
     chart_data = filesystem_lru.get_top_lru("../00b392fd-c977-4be5-bf20-54c43a3a2a13")
     chart_data = json.dumps(chart_data, indent=2)
     return chart_data
