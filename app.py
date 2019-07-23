@@ -8,6 +8,7 @@ app = Flask(__name__)
 #workspace = "/Dinesh/Genesys/designer/workspace/"
 workspace = "/ofs/"
 
+
 @app.route("/")
 def index():
     """
@@ -16,9 +17,13 @@ def index():
     chart_data = {}
     return chart_data
 
-@app.route("/lru")
-def fs_lru():
-    chart_data = filesystem_lru.get_top_lru("../00b392fd-c977-4be5-bf20-54c43a3a2a13")
+@app.route("/lru/<ccid>/")
+@app.route("/lru/<ccid>/<top>/<days>/")
+def fs_lru(ccid, top=None, days=None):
+    print(ccid)
+    if top == None:
+        top = 100
+    chart_data = filesystem_lru.get_top_lru(workspace + ccid, top=top, days=days)
     chart_data = json.dumps(chart_data, indent=2)
     return chart_data
 

@@ -6,45 +6,84 @@ import heapq
 import matplotlib.pylab as plt
 import numpy as np
 import math
+import re
+import datetime
 
 
 # to get top 10 file/application which opened least recent 
-def get_top_lru(fs, top=10):
+def get_top_lru(fs, top=100, days=None):
 	# top = []
-	print("getting files")
 	files = []
 	# r=root, d=directories, f = files
 	for r, d, f in os.walk(fs):
-		# print f
 		for file in f:
 			# if '.json' in file:
 			files.append(os.path.join(r, file))
 
-	# for f in files:
-	# 	print(time.ctime(os.path.getatime(f)))
-	# lrc_files = files
-	lrc_files = heapq.nsmallest(
+	lru_files = heapq.nsmallest(
 			int(top), files, key=os.path.getatime)
 
-	print (lrc_files)
-
 	big_files = heapq.nlargest(
-				int(top), lrc_files, key=os.path.getsize)
-	# top_files_dict = {}
-	top_files = []
+				int(top), lru_files, key=os.path.getsize)
 
-	for file in big_files:
-		print(time.ctime(os.path.getatime(file)))
+	app_info = get_application_info(big_files, days)
+	data = get_aggregated_data(app_info, files)
 
-		# top_files_dict.update({file: os.path.getsize(file)})
-		top_files.append({"file":file,"size": os.path.getsize(file)})
-	sorted(top_files, key = lambda i: i['size'])
-	print(top_files)
-	plots = []
-	plots.append([f['file'] for f in top_files])
-	plots.append([f['size'] for f in top_files])
+	return data
 
-	return top_files
+def get_application_info(files_list, days):
+	app_ids = []
+	for file in files_list:
+		m = re.search('workspace/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', file)
+		if m:
+			app_id = m.group(1)
+			# return app_id
+			if days:
+				ct = datetime.datetime.fromtimestamp(time.time())
+				at = datetime.datetime.fromtimestamp(os.path.getatime(file))
+				delta = ct - at
+				if delta.days >= int(days):
+					app_ids.append(app_id)
+			else:
+				app_ids.append(app_id)
+		else:
+			print ("No matching application. This can be a common file. skip for now!!")
+			# return False
+	# remove duplicates
+	app_ids = list(set(app_ids))
+	return app_ids
+
+def get_aggregated_size(files):
+	size = 0
+	if type(files) == list:
+		for file in files:
+			size = size + int(os.path.getsize(file))
+		return size
+	elif type(files) == str:
+		return int(os.path.getsize(files))
+
+def get_aggregated_data(app_info, files):
+	final_data = []
+	app_files=[]
+	for app in app_info:
+		for f in files:
+			if app in f:
+				app_files.append(f)
+		# app_files = [f for f in files if app in f]
+		size = get_aggregated_size(app_files)
+		final_data.append({"application": app, "size": size})
+		# not considering common files now. may be later
+		# else:
+		# 	size = get_aggregated_size(item)
+		# 	final_data.append({"application": "common", "size": size, "file": item})
+
+	return final_data
+
+def validate_timestamp(app_files):
+	pass
+
+def filter_by_days(day, app_files):
+	pass
 
 def plot(data):
 	x, y = data
@@ -68,10 +107,7 @@ def convert_size(size_bytes):
 	size = round(size_bytes / power, 2) 
 	return "%s %s" % (size, size_name[i])
 
-# cwd = os.getcwd()
-# l = get_top_lru("00b392fd-c977-4be5-bf20-54c43a3a2a13")
 
-# l = get_top_lru("/Users/rramacha/GenOps/")
-# plot(l)
+# l = get_top_lru("../00b392fd-c977-4be5-bf20-54c43a3a2a13", days=1)
 
 
