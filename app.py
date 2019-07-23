@@ -20,7 +20,6 @@ def index():
 @app.route("/lru/<ccid>/")
 @app.route("/lru/<ccid>/<top>/<days>/")
 def fs_lru(ccid, top=None, days=None):
-    print(ccid)
     if top == None:
         top = 100
     chart_data = filesystem_lru.get_top_lru(workspace + ccid, top=top, days=days)
