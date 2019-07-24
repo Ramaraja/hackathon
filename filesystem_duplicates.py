@@ -46,7 +46,6 @@ def check_duplicate_files(workspace, ccid, search_dirs=None):
     # Walk through all files and folders within directory
     for path, dirs, files in os.walk(workspace_dir):
         defpath = path.split('/')[4:5]
-        print defpath
         res = any(elem in defpath for elem in search_dirs)
         if res:
             for each_file in files:
