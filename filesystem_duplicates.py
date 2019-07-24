@@ -27,10 +27,11 @@ def generate_md5(fname, chunk_size=1024):
     return hash.hexdigest()
 
 
-def check_duplicate_files(directory, search_dirs=None):
+def check_duplicate_files(workspace, ccid, search_dirs=None):
     """
     Starting block of script
     """
+    workspace_dir = workspace + ccid
     # The dict will have a list as values
     md5_dict = defaultdict(list)
 
@@ -43,8 +44,9 @@ def check_duplicate_files(directory, search_dirs=None):
     #                       "vox", "wav", 'grxml', 'json']
 
     # Walk through all files and folders within directory
-    for path, dirs, files in os.walk(directory):
-        defpath = path.split('/')[2:3]
+    for path, dirs, files in os.walk(workspace_dir):
+        defpath = path.split('/')[4:5]
+        print defpath
         res = any(elem in defpath for elem in search_dirs)
         if res:
             for each_file in files:
@@ -61,11 +63,11 @@ def check_duplicate_files(directory, search_dirs=None):
     dir_paths = ''
     for file_ls in duplicate_files:
         for path in file_ls:
-            top_level_path = path.split('/')[:3]
+            top_level_path = path.split('/')[:5]
             dir_paths = '/'.join(top_level_path)
         file_dict[dir_paths].append(file_ls)
         file_list.append(dir_paths)
     dup_file_dir_count = dict(Counter(file_list))
     dup_file_dir_count_json = json.dumps(dup_file_dir_count)
-    file_dict_json =  json.dumps(file_dict)
+    file_dict_json = json.dumps(file_dict)
     return dup_file_dir_count_json, file_dict_json

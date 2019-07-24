@@ -7,7 +7,6 @@ from application_integrity import IntegrityChecker
 import non_essential_files
 
 app = Flask(__name__)
-#workspace = "/Dinesh/Genesys/designer/workspace/"
 
 workspace = os.environ['WORKSPACE']
 
@@ -62,13 +61,13 @@ def app_essentialfile(ccid):
 @app.route('/dup/count/<ccid>')
 def fs_dup_workspace(ccid, search_dirs=None):
    dup_file_count, dup_file_list = filesystem_duplicates.check_duplicate_files(
-       ccid, search_dirs=search_dirs)
+       workspace, ccid, search_dirs=search_dirs)
    return dup_file_count
 
 @app.route('/dup/list/<ccid>')
 def fs_dup_file_list(ccid, search_dirs=None):
    dup_file_count, dup_file_list = filesystem_duplicates.check_duplicate_files(
-       ccid, search_dirs=search_dirs)
+       workspace, ccid, search_dirs=search_dirs)
    return dup_file_list
 
 
