@@ -3,6 +3,8 @@ import json
 import os.path
 from os import path
 from nested_lookup import get_occurrence_of_key, get_occurrence_of_value
+from nested_lookup import nested_lookup
+
 
 def find_all(name, path):
     result = []
@@ -42,7 +44,6 @@ def non_essential_json(base_path, cc_id):
              "specialdays": "businessobjects/specialdays/"
              }
     workspace = base_path + cc_id + "/workspace/" #"/Users/jjaisank/designer/repo/workspace/36969587-76bf-410a-8764-532390bbbf90/workspace/"
-    print workspace
     manifest_files = find_all('manifest.json', workspace)
     base_hash = get_directory_structure(workspace)
     for manifest_file in manifest_files:
@@ -93,9 +94,9 @@ def non_essential_json(base_path, cc_id):
                                     base_hash["workspace"]["messages"][messagefile][messages["id"]]["dependent"] =  manifest_file
                                     #print  base_hash["workspace"]["audio"][audiofile][announcement["id"]]
                     if resource == "grammars":
-                        if path.exists(workspace + paths[resource] + data[resource]["id"]):
-                            base_hash["workspace"]["grammars"][data[resource]["id"]]["Touchstatus"] = True
-                            base_hash["workspace"]["grammars"][data[resource]["id"]]["dependent"] = manifest_file
+                        if path.exists(workspace + paths[resource] + data[resource][0]["id"]):
+                            base_hash["workspace"]["grammars"][data[resource][0]["id"]]["Touchstatus"] = True
+                            base_hash["workspace"]["grammars"][data[resource][0]["id"]]["dependent"] = manifest_file
                             # print base_hash["workspace"]["messages"][data[resource]["id"]]
                     if resource == "businesshours" or resource == "emergencyflags" or resource == "datatables" or resource == "specialdays":
                         for res in data[resource]:
@@ -112,11 +113,18 @@ def non_essential_json(base_path, cc_id):
                             # print base_hash["workspace"][resource][data[resource]["id"]]
     return base_hash
 
-def non_essential_count(base_path, cc_id):
-    base_json = non_essential_json(base_path, cc_id)
+def non_essential_count(base_json):
+    #base_json = non_essential_json(base_path, cc_id)
     return {"total":get_occurrence_of_key(base_json, key="Touchstatus"),
             "essential":get_occurrence_of_value(base_json, value=True),
             "non-essential":get_occurrence_of_value(base_json, value=False)}
+
+def apply_filter(base_json, filter):
+    #print base_json
+    result = nested_lookup(filter,base_json)
+    #print "------",len(result), "-----------------\n", len(result[0]), "------", len(result[1]) , "--------", cmp(result[0], result[1])
+    return result[-1]
+
 
 def find_key(d, value):
     for k,v in d.items():
@@ -144,23 +152,15 @@ def find_all_occurence(d,value):
         #print get_occurrence_of_value(d, value=value)
     return results
 
-def list_non_essential_files(base_path, cc_id):
-    base_json = non_essential_json(base_path, cc_id)
+def list_non_essential_files(base_json):
+    #base_json = non_essential_json(base_path, cc_id)
     return {
         "file": find_all_occurence(base_json, False)
     }
 
-def list_essential_files(base_path, cc_id):
-    base_json = non_essential_json(base_path, cc_id)
+def list_essential_files(base_json):
+    #base_json = non_essential_json(base_path, cc_id)
     return {
         "file": find_all_occurence(base_json, True)
     }
 
-#print (json.dumps(non_essential_json(), indent=4, sort_keys=True))
-#print non_essential_count()
-
-#print list_essential_files()
-#print list_non_essential_files()
-#f = open("output.json", "w")
-#f.write(json.dumps(base_hash, indent=4, sort_keys=True))
-#f.close()

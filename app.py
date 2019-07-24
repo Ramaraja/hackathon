@@ -10,6 +10,7 @@ app = Flask(__name__)
 
 workspace = os.environ['WORKSPACE']
 
+
 @app.route("/")
 def index():
     """
@@ -41,20 +42,32 @@ def app_nonessential(ccid):
     return data
 
 @app.route("/nonessentialcount/<ccid>")
-def app_nonessentialcount(ccid):
-    nonEssentialJson = non_essential_files.non_essential_count(workspace, ccid)
+@app.route("/nonessentialcount/<ccid>/<filter>")
+def app_nonessentialcount(ccid, filter=None):
+    base_json = non_essential_files.non_essential_json(workspace, ccid)
+    if filter:
+        base_json = non_essential_files.apply_filter(base_json, filter)
+    nonEssentialJson = non_essential_files.non_essential_count(base_json)
     data = json.dumps(nonEssentialJson, indent=2)
     return data
 
 @app.route("/nonessentialfiles/<ccid>")
-def app_nonessentialfile(ccid):
-    nonEssentialJson = non_essential_files.list_non_essential_files(workspace, ccid)
+@app.route("/nonessentialfiles/<ccid>/<filter>")
+def app_nonessentialfile(ccid, filter=None):
+    base_json = non_essential_files.non_essential_json(workspace, ccid)
+    if filter:
+        base_json = non_essential_files.apply_filter(base_json, filter)
+    nonEssentialJson = non_essential_files.list_non_essential_files(base_json)
     data = json.dumps(nonEssentialJson, indent=2)
     return data
 
 @app.route("/essentialfiles/<ccid>")
-def app_essentialfile(ccid):
-    nonEssentialJson = non_essential_files.list_essential_files(workspace, ccid)
+@app.route("/essentialfiles/<ccid>/<filter>")
+def app_essentialfile(ccid, filter=None):
+    base_json = non_essential_files.non_essential_json(workspace, ccid)
+    if filter:
+        base_json = non_essential_files.apply_filter(base_json, filter)
+    nonEssentialJson = non_essential_files.list_essential_files(base_json)
     data = json.dumps(nonEssentialJson, indent=2)
     return data
 
@@ -74,3 +87,4 @@ def fs_dup_file_list(ccid, search_dirs=None):
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000, debug=True)
+
