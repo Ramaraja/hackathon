@@ -8,6 +8,7 @@ import numpy as np
 import math
 import re
 import datetime
+import json
 
 
 # to get top 10 file/application which opened least recent 
@@ -28,7 +29,6 @@ def get_top_lru(fs, top=100, days=None):
 
 	app_info = get_application_info(big_files, days)
 	data = get_aggregated_data(app_info, files)
-
 	return data
 
 def get_application_info(files_list, days):
@@ -71,13 +71,24 @@ def get_aggregated_data(app_info, files):
 				app_files.append(f)
 		# app_files = [f for f in files if app in f]
 		size = get_aggregated_size(app_files)
-		final_data.append({"application": app, "size": size})
+		app_name = get_app_name(app, files)
+		final_data.append({"application": app, "size": size, "name": app_name})
 		# not considering common files now. may be later
 		# else:
 		# 	size = get_aggregated_size(item)
 		# 	final_data.append({"application": "common", "size": size, "file": item})
 
 	return final_data
+
+def get_app_name(app, files):
+	for f in files:
+		if app in f and f.split('/')[-1] == 'manifest.json':
+			try:
+				with open(f) as json_file:
+					data = json.load(json_file)
+				return data['name']
+			except:
+				return "Unknown app"
 
 def validate_timestamp(app_files):
 	pass
