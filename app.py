@@ -1,6 +1,7 @@
+import os
 import json
-from flask import Flask, render_template
-import pandas as pd
+from flask import Flask
+import filesystem_duplicates
 import filesystem_lru
 from application_integrity import IntegrityChecker
 import non_essential_files
@@ -8,7 +9,7 @@ import non_essential_files
 app = Flask(__name__)
 #workspace = "/Dinesh/Genesys/designer/workspace/"
 
-
+workspace = os.environ['WORKSPACE']
 
 @app.route("/")
 def index():
@@ -57,6 +58,19 @@ def app_essentialfile(ccid):
     nonEssentialJson = non_essential_files.list_essential_files(workspace, ccid)
     data = json.dumps(nonEssentialJson, indent=2)
     return data
+
+@app.route('/dup/count/<ccid>')
+def fs_dup_workspace(ccid, search_dirs=None):
+   dup_file_count, dup_file_list = filesystem_duplicates.check_duplicate_files(
+       ccid, search_dirs=search_dirs)
+   return dup_file_count
+
+@app.route('/dup/list/<ccid>')
+def fs_dup_file_list(ccid, search_dirs=None):
+   dup_file_count, dup_file_list = filesystem_duplicates.check_duplicate_files(
+       ccid, search_dirs=search_dirs)
+   return dup_file_list
+
 
 
 if __name__ == "__main__":
