@@ -29,6 +29,7 @@ def get_top_lru(fs, top=100, days=None):
 
 	app_info = get_application_info(big_files, days)
 	data = get_aggregated_data(app_info, files)
+
 	return data
 
 def get_application_info(files_list, days):
@@ -74,6 +75,7 @@ def get_aggregated_data(app_info, files):
 		time = get_time_since_used(app, files)
 		app_name = get_app_name(app, files)
 		final_data.append({"application": app, "size": size, "name": app_name, "time": time})
+		sorted(final_data, key = lambda i: i['size'])
 		# not considering common files now. may be later
 		# else:
 		# 	size = get_aggregated_size(item)
