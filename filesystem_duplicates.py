@@ -67,6 +67,9 @@ def check_duplicate_files(workspace, ccid, search_dirs=None):
         file_dict[dir_paths].append(file_ls)
         file_list.append(dir_paths)
     dup_file_dir_count = dict(Counter(file_list))
-    dup_file_dir_count_json = json.dumps(dup_file_dir_count)
-    file_dict_json = json.dumps(file_dict)
+    dup_file_dir_count_json = json.dumps([dup_file_dir_count])
+    file_dict_json = json.dumps([file_dict])
     return dup_file_dir_count_json, file_dict_json
+
+# if __name__== "__main__":
+#   check_duplicate_files('../ofs/', '00b392fd-c977-4be5-bf20-54c43a3a2a13')

@@ -56,7 +56,7 @@ def app_nonessentialcount(ccid, filter=None):
     base_json = non_essential_files.non_essential_json(workspace, ccid)
     if filter:
         base_json = non_essential_files.apply_filter(base_json, filter)
-    nonEssentialJson = non_essential_files.non_essential_count(base_json)
+    nonEssentialJson = non_essential_files.non_essential_count(base_json, filter)
     data = json.dumps(nonEssentialJson, indent=2)
     return data
 

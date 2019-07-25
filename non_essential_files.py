@@ -113,9 +113,9 @@ def non_essential_json(base_path, cc_id):
                             # print base_hash["workspace"][resource][data[resource]["id"]]
     return base_hash
 
-def non_essential_count(base_json):
+def non_essential_count(base_json, filter="workspace"):
     #base_json = non_essential_json(base_path, cc_id)
-    return {"total":get_occurrence_of_key(base_json, key="Touchstatus"),
+    return {"folder":filter,"total":get_occurrence_of_key(base_json, key="Touchstatus"),
             "essential":get_occurrence_of_value(base_json, value=True),
             "non-essential":get_occurrence_of_value(base_json, value=False)}
 
