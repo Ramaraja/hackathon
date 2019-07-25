@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <link href="assets/css/bootstrap.css" rel="stylesheet" />
+            <!-- FontAwesome Styles-->
+            <link href="assets/css/font-awesome.css" rel="stylesheet" />
+            <link href="assets/css/custom-styles.css" rel="stylesheet" />
+            <!-- Google Fonts-->
+            <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' /> 
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/1.0.22/ui-router-angularjs.min.js"></script>
+            <script src="assets/js/custom_controller.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+            <script src="assets/js/jquery-1.10.2.js"></script>
+            <!-- Bootstrap Js -->
+            <script src="assets/js/bootstrap.min.js"></script>
+             
+            <!-- Metis Menu Js -->
+            <script src="assets/js/jquery.metisMenu.js"></script>
+            <script src="https://d3js.org/d3.v5.min.js"></script>
+
+            <script>
+                    (function(){
+                        var integrity = angular.module('integrity_app',[]);
+                        integrity.controller('integrity_controller', function ($scope, $http) {
+                        var url = 'http://172.24.135.30:8000/checkintegrity/top/00b392fd-c977-4be5-bf20-54c43a3a2a13/';
+                        // $scope.data = [{'name':'ABC', 'size': '457MB'}, {'name':'ABD', 'size': '457MB'}, {'name':'ABE', 'size': '457MB'}];
+                        $http.get(url).then(function(response) {
+                            console.log(response.data);
+                            $scope.data = response.data;
+                            $scope.data.forEach(function (d, i) {
+                                $scope.data[i].mis = d.missing;
+                            })
+                        }, function(error) {
+                            console.log(error);
+                        });
+                        console.log($scope.data);
+                    });
+                    }());
+                </script>
+    </head>
+    <body ng-app="integrity_app" ng-controller="integrity_controller">
+            <div id="wrapper">
+                    <nav class="navbar navbar-default top-navbar" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="navbar-brand" href="index.html"><i class="fa fa-gear"></i> <strong>CSO</strong></a>
+                            </div>
+                        </nav>
+                        <!--/. NAV TOP  -->
+                        <nav class="navbar-default navbar-side" role="navigation">
+                            <div class="sidebar-collapse">
+                                <ul class="nav" id="main-menu">
+                
+                                    <li>
+                                        <a href="LRU.html"><i class="fa fa-dashboard"></i> LRU</a>
+                                    </li>
+                                    <li>
+                                        <a href="duplicate.html"><i class="fa fa-desktop"></i> Duplicate</a>
+                                    </li>
+                                    <li>
+                                        <a href="nonLinked.html"><i class="fa fa-bar-chart-o"></i> Non-Linked</a>
+                                    </li>
+                                    <li>
+                                        <a class="active-menu" href="integrity.html"><i class="fa fa-qrcode"></i> Integrity</a>
+                                    </li> 
+                                  
+                                </ul>
+                
+                            </div>
+                        </nav>
+            </div>
+
+            <div id="page-wrapper">
+                    <div id="page-inner">
+        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h1 class="page-header"> Application Integrity Checker</h1>
+                        
+                                <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    Application Name
+                                                    <span style="margin-left: 400px;">Missing Resources</span>
+                                                </div>
+                                                <!-- <div style="    margin-left: 894px;" class="panel-heading">
+                                                        Missing Resources
+                                                </div> -->
+                                                <div class="panel-body">
+                                                    <div class="list-group" ng-repeat="item in data">
+                                                        <a href="#" class="list-group-item">
+                                                            <span style="margin-right: 500px;background-color:#d56413" class="badge">{{item.missing[0]}}</span>
+                                                            <i class="fa fa-fw fa-comment"></i> {{item.name}}
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                       </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            </div>
+    </body>
+</html>

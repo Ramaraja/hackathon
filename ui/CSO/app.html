@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html ng-app="flow_app">
+    <head>
+        <link href="assets/css/bootstrap.css" rel="stylesheet" />
+        <!-- FontAwesome Styles-->
+        <link href="assets/css/font-awesome.css" rel="stylesheet" />
+        <link href="assets/css/custom-styles.css" rel="stylesheet" />
+        <!-- Google Fonts-->
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' /> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/1.0.22/ui-router-angularjs.min.js"></script>
+        <script src="assets/js/custom_controller.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <script src="assets/js/jquery-1.10.2.js"></script>
+        <!-- Bootstrap Js -->
+        <script src="assets/js/bootstrap.min.js"></script>
+         
+        <!-- Metis Menu Js -->
+        <script src="assets/js/jquery.metisMenu.js"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    </head>
+    <body ng-controller="flow_controller">
+        
+        <div id="wrapper">
+                <nav class="navbar navbar-default top-navbar" role="navigation">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="index.html"><i class="fa fa-gear"></i> <strong>CSO</strong></a>
+                        </div>
+                    </nav>
+                    <!--/. NAV TOP  -->
+                    <nav class="navbar-default navbar-side" role="navigation">
+                        <div class="sidebar-collapse">
+                            <ul class="nav" id="main-menu">
+            
+                                <li>
+                                    <a class="active-menu" href="LRU.html"><i class="fa fa-dashboard"></i> LRU</a>
+                                </li>
+                                <li>
+                                    <a href="duplicate.html"><i class="fa fa-desktop"></i> Duplicate</a>
+                                </li>
+                                <li>
+                                    <a href="nonLinked.html"><i class="fa fa-bar-chart-o"></i> Non-Linked</a>
+                                </li>
+                                <li>
+                                    <a href="integrity.html"><i class="fa fa-qrcode"></i> Integrity</a>
+                                </li> 
+                              
+                            </ul>
+            
+                        </div>
+                    </nav>
+        </div>
+
+    </body>
+</html>

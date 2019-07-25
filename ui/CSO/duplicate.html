@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <link href="assets/css/bootstrap.css" rel="stylesheet" />
+            <!-- FontAwesome Styles-->
+            <link href="assets/css/font-awesome.css" rel="stylesheet" />
+            <link href="assets/css/custom-styles.css" rel="stylesheet" />
+            <!-- Google Fonts-->
+            <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' /> 
+            <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/1.0.22/ui-router-angularjs.min.js"></script> -->
+            <script src="assets/js/custom_controller.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+            <script src="assets/js/jquery-1.10.2.js"></script>
+            <!-- Bootstrap Js -->
+            <script src="assets/js/bootstrap.min.js"></script>
+             
+            <!-- Metis Menu Js -->
+            <script src="assets/js/jquery.metisMenu.js"></script>
+            <script src="https://d3js.org/d3.v5.min.js"></script>
+
+            <script>
+                    (function(){
+                        var dup = angular.module('dup_app',[]);
+                        var url = 'http://172.24.135.30:8000/dup/list/00b392fd-c977-4be5-bf20-54c43a3a2a13/';
+                        dup.controller('dup_controller', function ($scope, $http) {
+                        $http.get(url).then(function(response) {
+                            
+                            $scope.data = response.data[0].audio;
+                            $scope.businesssData = response.data[0].businessobjects[0];
+                            console.log($scope.data);
+                        }, function(error) {
+                            console.log(error);
+                        });
+
+                    });
+                    }());
+
+                    // set the dimensions of the canvas
+var margin = {top: 20, right: 20, bottom: 70, left: 40},
+    width = 600 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+
+// set the ranges
+var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+var y = d3.scale.linear().range([height, 0]);
+
+// define the axis
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(10);
+
+
+// add the SVG element
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+
+
+// load the data
+d3.json("data.json", function(error, data) {
+
+    data = [
+    {
+        "file": "App1",
+        "size": 100
+    },
+    {
+        "file": "App2",
+        "size": 200
+    },
+    {
+        "file": "App3",
+        "size": 500
+    }];
+    console.log(error)
+    data.forEach(function(d) {
+        d.file = d.file;
+        d.size = +d.size;
+    });
+	
+  // scale the range of the data
+  x.domain(data.map(function(d) { return d.file; }));
+  y.domain([0, d3.max(data, function(d) { return d.size; })]);
+
+  // add axis
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", "-.55em")
+      .attr("transform", "rotate(-90)" );
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 5)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Frequency");
+
+
+  // Add bar chart
+  svg.selectAll("bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.file); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.size); })
+      .attr("height", function(d) { return height - y(d.size); });
+
+});
+
+
+
+            </script>
+    </head>
+    <body ng-app="dup_app" ng-controller="dup_controller">
+            <div id="wrapper">
+                    <nav class="navbar navbar-default top-navbar" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <a class="navbar-brand" href="index.html"><i class="fa fa-gear"></i> <strong>CSO</strong></a>
+                            </div>
+                        </nav>
+                        <!--/. NAV TOP  -->
+                        <nav class="navbar-default navbar-side" role="navigation">
+                            <div class="sidebar-collapse">
+                                <ul class="nav" id="main-menu">
+                
+                                    <li>
+                                        <a href="LRU.html"><i class="fa fa-dashboard"></i> LRU</a>
+                                    </li>
+                                    <li>
+                                        <a class="active-menu" href="duplicate.html"><i class="fa fa-desktop"></i> Duplicate</a>
+                                    </li>
+                                    <li>
+                                        <a href="nonLinked.html"><i class="fa fa-bar-chart-o"></i> Non-Linked</a>
+                                    </li>
+                                    <li>
+                                        <a href="integrity.html"><i class="fa fa-qrcode"></i> Integrity</a>
+                                    </li> 
+                                  
+                                </ul>
+                
+                            </div>
+                        </nav>
+            </div>
+
+            <div id="page-wrapper">
+                    <div id="page-inner">
+        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h1 class="page-header"> Duplicates Count</h1>
+                                <!-- <div class="row">
+                                        <svg width="600" height="500"></svg>
+                                </div> -->
+                                <div id="row">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                Duplicate Statistics
+                                            </div>
+                                            <div class="panel-body">
+                                                <div id="morris-bar-chart"></div>
+                                            </div>
+                                        </div>    
+                                     </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                                <div class="col-md-12">
+                                    
+                                    <div class="row">
+                                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                                <div class="panel panel-default">
+                                                    <h3>Audio</h3>
+                                                    <div class="panel-body">
+                                                        <div class="list-group" ng-repeat="item in data">
+                                                            <a href="#" class="list-group-item">
+                                                                <span style="margin-right: 200px;">{{item[1]}}</span>
+                                                            </a>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                           </div>
+                                </div>
+                                <div class="row">
+                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                            <div class="panel panel-default">
+                                                <h3>Business Objects</h3>
+                                                <div class="panel-body">
+                                                    <div class="list-group" ng-repeat="item in businesssData">
+                                                        <a href="#" class="list-group-item">
+                                                            <span style="margin-right: 200px;">{{item}}</span>
+                                                        </a>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                       </div>
+                            </div>
+                            </div>
+                        </div>
+
+                    </div>
+            </div>
+
+
+            <script src="assets/js/jquery-1.10.2.js"></script>
+            <!-- Bootstrap Js -->
+          <script src="assets/js/bootstrap.min.js"></script>
+          <!-- Metis Menu Js -->
+          <script src="assets/js/jquery.metisMenu.js"></script>
+            <!-- Custom Js -->
+          <script src="assets/js/custom-scripts.js"></script>
+          <script src="assets/js/morris/raphael-2.1.0.min.js"></script>
+          <script src="assets/js/morris/morris.js"></script>
+    </body>
+</html>
