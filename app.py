@@ -33,7 +33,7 @@ def fs_lru(ccid, top=None, days=None):
 @app.route("/checkintegrity/<ccid>/")
 def app_integrity(ccid):
     ic = IntegrityChecker(workspace, ccid)
-    data = ic.list_of_favalidate_tenant_appsils()
+    data = ic.validate_tenant_apps()
     data = json.dumps(data, indent=2)
     return data
 
