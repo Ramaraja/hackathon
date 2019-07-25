@@ -92,7 +92,22 @@ def fs_dup_file_list(ccid, search_dirs=None):
        workspace, ccid, search_dirs=search_dirs)
    return dup_file_list
 
+@app.route("/allnonessential/<ccid>")
+def app_nonessential1(ccid):
+    nonEssentialJson = non_essential_files.non_essential_json(workspace, ccid)
+    list1 = []
+    key_list = nonEssentialJson["workspace"].keys()
 
+    for key in key_list:
+        if key == "Touchstatus":
+            continue
+        base_json = non_essential_files.apply_filter(nonEssentialJson, key)
+        #data = json.dumps(nonEssentialJson, indent=2)
+        #list.append(non_essential_files.non_essential_count(base_json, key))
+        if type(non_essential_files.non_essential_count(base_json, key)) != None:
+            list1.append(non_essential_files.non_essential_count(base_json, key))
+    chart_data = json.dumps(list1, indent=2)
+    return chart_data
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000, debug=True)
