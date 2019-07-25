@@ -138,11 +138,11 @@ class IntegrityChecker:
             app = apps[app_id]
             if not app['status']:
                 failed_app['name'] = app['name']
-                failed_app["missing"] = {}
+                failed_app["missing"] = []
                 missing = app['missingresources']
                 for group in self.GROUPS:
                     if group in missing.keys():
-                        failed_app["missing"][group] = len(missing[group])
+                        failed_app["missing"].append(str(len(missing[group]))+" "+ str(group))
             if failed_app != {}:
                 fails.append(failed_app)
 
