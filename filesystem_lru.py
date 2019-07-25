@@ -71,8 +71,9 @@ def get_aggregated_data(app_info, files):
 				app_files.append(f)
 		# app_files = [f for f in files if app in f]
 		size = get_aggregated_size(app_files)
+		time = get_time_since_used(app, files)
 		app_name = get_app_name(app, files)
-		final_data.append({"application": app, "size": size, "name": app_name})
+		final_data.append({"application": app, "size": size, "name": app_name, "time": time})
 		# not considering common files now. may be later
 		# else:
 		# 	size = get_aggregated_size(item)
@@ -89,6 +90,19 @@ def get_app_name(app, files):
 				return data['name']
 			except:
 				return "Unknown app"
+
+def get_time_since_used(app, files):
+	# need to fine tune the logic of used time. for now no time :(
+	ct = datetime.datetime.fromtimestamp(time.time())
+	
+	for f in files:
+		if app in f:
+			at = datetime.datetime.fromtimestamp(os.path.getatime(f))
+			delta = ct-at
+			if delta.days == 0:
+				return str(delta.seconds / (60 * 60)) + " Hrs"
+			else:
+				return str(delta.days) + " days"
 
 def validate_timestamp(app_files):
 	pass
@@ -119,6 +133,6 @@ def convert_size(size_bytes):
 	return "%s %s" % (size, size_name[i])
 
 
-# l = get_top_lru("../00b392fd-c977-4be5-bf20-54c43a3a2a13", days=1)
+# l = get_top_lru("../00b392fd-c977-4be5-bf20-54c43a3a2a13", days=0)
 
 
