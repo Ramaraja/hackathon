@@ -64,8 +64,8 @@ def check_duplicate_files(workspace, ccid, search_dirs=None):
         for path in file_ls:
             top_level_path = path.split('/')[:5]
             dir_paths = '/'.join(top_level_path)
-        file_dict[dir_paths].append(file_ls)
-        file_list.append(dir_paths)
+        file_dict[dir_paths.split('/')[-1]].append(file_ls)
+        file_list.append(dir_paths.split('/')[-1])
     dup_file_dir_count = dict(Counter(file_list))
     dup_file_dir_count_json = json.dumps([dup_file_dir_count])
     file_dict_json = json.dumps([file_dict])
