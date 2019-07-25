@@ -3,8 +3,8 @@
 FROM ubuntu:16.04
 
 # Installing python and requirements
-RUN    apt-get update && apt-get -y install curl python python-pip python-tk \
-&& apt-get clean
+RUN    apt-get update && apt-get -y install curl python python-pip vim \
+python-tk && apt-get clean
 RUN    pip install --upgrade pip
 RUN    mkdir -p ~/.pip/
 COPY . /hackathon
@@ -18,6 +18,5 @@ WORKDIR /hackathon
 
 RUN chmod +x /hackathon/run.sh
 RUN chmod +x /hackathon/app.py
-
 
 ENTRYPOINT ["/bin/bash","/hackathon/run.sh"]
