@@ -5,6 +5,7 @@ from uuid import UUID
 import json
 
 class IntegrityChecker:
+    GROUPS = ["announcements", "messages", "grammars", "businesshours", "calendars", "emergencyflags", "datatables", "specialdays" ]
     BUSINESS_OBJECTS = [ "businesshours", "calendars", "emergencyflags", "datatables", "specialdays"]
 
     def __init__(self, workspace, ccid):
@@ -127,3 +128,22 @@ class IntegrityChecker:
                             integrity_checker[self.ccid][app_id]["missingresources"]["grammars"].append(grammar)
         return integrity_checker
 
+
+    def list_of_fails(self):
+        fails = []
+        data = self.validate_tenant_apps()
+        apps = data[self.ccid]
+        for app_id in apps.keys():
+            failed_app = {}
+            app = apps[app_id]
+            if not app['status']:
+                failed_app['name'] = app['name']
+                failed_app["missing"] = {}
+                missing = app['missingresources']
+                for group in self.GROUPS:
+                    if group in missing.keys():
+                        failed_app["missing"][group] = len(missing[group])
+            if failed_app != {}:
+                fails.append(failed_app)
+
+        return fails

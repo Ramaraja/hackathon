@@ -9,6 +9,8 @@ import non_essential_files
 app = Flask(__name__)
 
 workspace = os.environ['WORKSPACE']
+#workspace = "/Dinesh/Genesys/designer/workspace/"
+
 
 
 @app.route("/")
@@ -31,7 +33,14 @@ def fs_lru(ccid, top=None, days=None):
 @app.route("/checkintegrity/<ccid>/")
 def app_integrity(ccid):
     ic = IntegrityChecker(workspace, ccid)
-    data = ic.validate_tenant_apps()
+    data = ic.list_of_favalidate_tenant_appsils()
+    data = json.dumps(data, indent=2)
+    return data
+
+@app.route("/checkintegrity/top/<ccid>/")
+def app_integrity_top(ccid):
+    ic = IntegrityChecker(workspace, ccid)
+    data = ic.list_of_fails()
     data = json.dumps(data, indent=2)
     return data
 
