@@ -29,10 +29,21 @@ class IntegrityChecker:
         return True
 
     def validate_messages(self, workspace, collection_id, message):
-        checkmessage = workspace+"/"+collection_id+"/"+message
+        basepath = workspace+"/"+collection_id
+        checkmessage = basepath+"/"+message
+        found = False
         if not os.path.exists(checkmessage):
-            return False
-        return True
+            if not os.path.exists(basepath+"/messages.json"):
+                return False
+            else:
+                with open(basepath+"/messages.json") as json_file:
+                    datas = json.load(json_file)
+                    for data in datas:
+                        resources = data['resources']
+                        for resouce in resources:
+                            if resouce['id'] == message:
+                                found = True
+        return found
 
     def validate_businessobjects(self, workspace, btype, businessobject):  
         checkfile = workspace+"/businessobjects"+"/"+btype+"/"+businessobject+".json"
@@ -61,26 +72,44 @@ class IntegrityChecker:
             integrity_checker[self.ccid][app_id]["status"] = True
             integrity_checker[self.ccid][app_id]["missingresources"] = {}
             with open(app+'/manifest.json') as json_file:
+                #print app_id
                 data = json.load(json_file)
                 integrity_checker[self.ccid][app_id]["name"] = data['name']
                 audiocollection = data['audiocollection']
                 messagecollection = data['messagecollection']
-                if audiocollection != None:
-                    announcements = data['announcements']
-                    for announcement in announcements:
-                        if not self.validate_announcements(tenant_workspace, audiocollection, announcement):
-                            integrity_checker[self.ccid][app_id]["status"] = False
-                            if not "announcements" in integrity_checker[self.ccid][app_id]["missingresources"].keys():
-                                integrity_checker[self.ccid][app_id]["missingresources"]["announcements"] = []
-                            integrity_checker[self.ccid][app_id]["missingresources"]["announcements"].append(announcement)
-                if messagecollection != None:
-                    messages = data['messages']
-                    for message in messages:
-                        if not self.validate_messages(tenant_workspace, messagecollection, message):
-                            integrity_checker[self.ccid][app_id]["status"] = False
-                            if not "messages" in integrity_checker[self.ccid][app_id]["missingresources"].keys():
-                                integrity_checker[self.ccid][app_id]["missingresources"]["messages"] = []
-                            integrity_checker[self.ccid][app_id]["missingresources"]["messages"].append(message)
+                announcements = data['announcements']
+                for announcement in announcements:
+                    if type(announcement) == dict:
+                        collection = announcement["collection"]
+                        annc = announcement["id"]
+                    else:
+                        annc = announcement
+                    if audiocollection != None:
+                        collection = audiocollection['id']
+                    if not self.validate_announcements(tenant_workspace, collection, annc):
+                        integrity_checker[self.ccid][app_id]["status"] = False
+                        if not "announcements" in integrity_checker[self.ccid][app_id]["missingresources"].keys():
+                            integrity_checker[self.ccid][app_id]["missingresources"]["announcements"] = []
+                        integrity_checker[self.ccid][app_id]["missingresources"]["announcements"].append(annc)
+                    
+                messages = data['messages']
+                for message in messages:
+                    if type(message) == dict:
+                        #print message
+                        collection = message["collection"]
+                        msg = message["id"]
+                        #print msg
+                    else:
+                        msg = message
+                    if messagecollection != None:
+                        collection = messagecollection['id']
+                    #print msg
+                    if not self.validate_messages(tenant_workspace, collection, msg):
+                        integrity_checker[self.ccid][app_id]["status"] = False
+                        if not "messages" in integrity_checker[self.ccid][app_id]["missingresources"].keys():
+                            integrity_checker[self.ccid][app_id]["missingresources"]["messages"] = []
+                        integrity_checker[self.ccid][app_id]["missingresources"]["messages"].append(msg)
+
                 for businessobject in IntegrityChecker.BUSINESS_OBJECTS:
                     if businessobject in data.keys() and data[businessobject] != []:
                         for bobject in data[businessobject]:
